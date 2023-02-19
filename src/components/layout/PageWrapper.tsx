@@ -1,7 +1,7 @@
 import { ReactNode, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setAppState } from "../../redux/features/appStateSlice";
-import { setAppName } from "../../redux/features/appNameSlice";
+import { setAppState } from "@/redux/features/appStateSlice";
+import { setAppName } from "@/redux/features/appNameSlice";
 
 type Props = {
   state?: string,

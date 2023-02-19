@@ -1,8 +1,16 @@
 import React from 'react';
 import { useState } from "react";
-import { Box } from '@mui/material';
+import dayjs, { Dayjs } from 'dayjs';
+import { Box, Grid, TextField } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
-import DateButton from '@/components/common/DateButton';
+import CustomButton from '@/components/common/CustomButton';
+import Stack from '@mui/material/Stack';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+import TotalField from '@/components/common/TotalField';
+
 
 const convertDatetime = (time: string) => {
   const match = time.match(/\d+/);
@@ -24,7 +32,12 @@ const convertDatetime = (time: string) => {
 
 const CampaignPage = () => {
   const [tableData, setTableData] = useState([]);
+  const [totalRevenue, setTotalRevenue] = useState();
+  const [totalCommission, setTotalCommission] = useState();
+  const [totalComplete, setTotalComplete] = useState();
+  const [pickDate, setPickDate] = React.useState<Dayjs | null>(dayjs('2018-01-01'));
   const [spinner, setSpinner] = useState(false);
+  
   let campaignData: any = [];
   const columns = [
     { 
@@ -67,7 +80,7 @@ const CampaignPage = () => {
         method : 'POST',
         headers :{ 'Content-Type' : 'application/json',},
         body : JSON.stringify({
-          "search_year": 2018,
+          "search_year": dayjs(pickDate).year(),
           // "search_month": 1
         }),
     })
@@ -86,10 +99,14 @@ const CampaignPage = () => {
       });
       setTableData(campaignData);
       setSpinner(false);
+      setTotalRevenue(data.Payment.Revenue);
+      setTotalCommission(data.Payment.Commission);
+      setTotalComplete(data.Payment.Complete);
     })
     .catch(err => {
       console.log(err);
     });
+
   }
 
   return (
@@ -99,7 +116,31 @@ const CampaignPage = () => {
         width: '100%'
       }}
     >
-      <DateButton onClick={getGridData}>저장</DateButton>
+      <Grid container spacing={1}>
+        <Box p={1}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <Stack spacing={3}>
+            <DatePicker
+              views={['year']}
+              label="Year"
+              minDate={dayjs('2018-01-01')}
+              maxDate={dayjs('2021-12-01')}
+              value={pickDate}
+              onChange={(newDate) => {
+                setPickDate(newDate);
+              }}
+              renderInput={(params) => <TextField size="small" {...params} helperText={null} />}
+            />
+          </Stack>
+        </LocalizationProvider>
+        </Box>
+        <CustomButton onClick={getGridData}>조회</CustomButton>
+      </Grid>
+      <Grid container spacing={1}>
+        <TotalField label="조회기간 수익: " value={totalRevenue}/>
+        <TotalField label="조회기간 수수료: " value={totalCommission}/>
+        <TotalField label="조회기간 캠페인 완료 수: " value={totalComplete}/>
+      </Grid>
       <DataGrid 
         loading={spinner}
         getRowId={(row:any) => row.CampaignKey+row.Complete}

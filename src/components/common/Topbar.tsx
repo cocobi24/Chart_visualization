@@ -1,8 +1,8 @@
 import { AppBar, Toolbar, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
-import colorConfigs from "../../configs/colorConfigs";
-import sizeConfigs from "../../configs/sizeConfigs";
-import { RootState } from "../../redux/store";
+import colorConfigs from "@/configs/colorConfigs";
+import sizeConfigs from "@/configs/sizeConfigs";
+import { RootState } from "@/redux/store";
 
 const Topbar = () => {
   const { appName } = useSelector((state: RootState) => state.appName);
