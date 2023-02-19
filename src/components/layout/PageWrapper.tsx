@@ -18,7 +18,6 @@ const PageWrapper = (props: Props) => {
   useEffect(() => {
     if (props.state) {
       dispatch(setAppState(props.state));
-      console.log(props.state)
     }
 
     if (props.sidebarProps) {
