@@ -53,7 +53,7 @@ const AppPage = () => {
       field: 'Revenue', 
       headerName: '월 수익', 
       width: 200, 
-      type: 'string' ,
+      type: 'number' 
     }, { 
       field: 'Commission', 
       headerName: '월 수수료', 
@@ -89,11 +89,19 @@ const AppPage = () => {
         row.App[0]['Datetime'] = row.Datetime
         appData.push(row.App[0]);
       });
+
+      let revenue = data.Payment.Revenue;
+      let commission = data.Payment.Commission;
+      let complete = data.Payment.Complete;
+      revenue = revenue? Number(revenue).toLocaleString('ko-KR')+' 원' : 0 ;
+      commission = commission? Number(commission).toLocaleString('ko-KR')+' 원' : 0 ;
+      complete = complete? Number(complete).toLocaleString('ko-KR')+' 건' : 0 ;
+      
       setTableData(appData);
       setSpinner(false);
-      setTotalRevenue(data.Payment.Revenue);
-      setTotalCommission(data.Payment.Commission);
-      setTotalComplete(data.Payment.Complete);
+      setTotalRevenue(revenue);
+      setTotalCommission(commission);
+      setTotalComplete(complete);
       console.log(appData)
       console.log(monthlyData)
     })
@@ -112,21 +120,21 @@ const AppPage = () => {
     >
       <Grid container spacing={1}>
         <Box p={1}>
-        <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <Stack spacing={3}>
-            <DatePicker
-              views={['year']}
-              label="Year"
-              minDate={dayjs('2018-01-01')}
-              maxDate={dayjs('2021-12-01')}
-              value={pickDate}
-              onChange={(newDate) => {
-                setPickDate(newDate);
-              }}
-              renderInput={(params) => <TextField size="small" {...params} helperText={null} />}
-            />
-          </Stack>
-        </LocalizationProvider>
+          <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <Stack spacing={3}>
+              <DatePicker
+                views={['year']}
+                label="Year"
+                minDate={dayjs('2018-01-01')}
+                maxDate={dayjs('2021-12-01')}
+                value={pickDate}
+                onChange={(newDate) => {
+                  setPickDate(newDate);
+                }}
+                renderInput={(params) => <TextField size="small" {...params} helperText={null} />}
+              />
+            </Stack>
+          </LocalizationProvider>
         </Box>
         <CustomButton onClick={getGridData}>조회</CustomButton>
       </Grid>

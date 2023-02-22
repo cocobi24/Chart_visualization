@@ -97,11 +97,20 @@ const CampaignPage = () => {
           campaignData.push(campaign);
         });
       });
+
+      let revenue = data.Payment.Revenue;
+      let commission = data.Payment.Commission;
+      let complete = data.Payment.Complete;
+      revenue = revenue? Number(revenue).toLocaleString('ko-KR')+' 원' : 0 ;
+      commission = commission? Number(commission).toLocaleString('ko-KR')+' 원' : 0 ;
+      complete = complete? Number(complete).toLocaleString('ko-KR')+' 건' : 0 ;
+      
+
       setTableData(campaignData);
       setSpinner(false);
-      setTotalRevenue(data.Payment.Revenue);
-      setTotalCommission(data.Payment.Commission);
-      setTotalComplete(data.Payment.Complete);
+      setTotalRevenue(revenue);
+      setTotalCommission(commission);
+      setTotalComplete(complete);
     })
     .catch(err => {
       console.log(err);

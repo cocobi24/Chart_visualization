@@ -104,11 +104,19 @@ const MonthPage = () => {
     })
     .then(data => {
       const monthlyData = data.Payment.Monthly;
+      let revenue = data.Payment.Revenue;
+      let commission = data.Payment.Commission;
+      let complete = data.Payment.Complete;
+      revenue = revenue? Number(revenue).toLocaleString('ko-KR')+' 원' : 0 ;
+      commission = commission? Number(commission).toLocaleString('ko-KR')+' 원' : 0 ;
+      complete = complete? Number(complete).toLocaleString('ko-KR')+' 건' : 0 ;
+      
+
       setTableData(monthlyData);
       setSpinner(false);
-      setTotalRevenue(data.Payment.Revenue);
-      setTotalCommission(data.Payment.Commission);
-      setTotalComplete(data.Payment.Complete);
+      setTotalRevenue(revenue);
+      setTotalCommission(commission);
+      setTotalComplete(complete);
       console.log(monthlyData)
     })
     .catch(err => {
