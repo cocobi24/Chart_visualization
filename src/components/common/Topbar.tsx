@@ -1,6 +1,7 @@
 import { AppBar, Toolbar, Typography } from "@mui/material";
 import { useSelector } from "react-redux";
 import colorConfigs from "@/configs/colorConfigs";
+import fontConfigs from "@/configs/fontConfigs";
 import sizeConfigs from "@/configs/sizeConfigs";
 import { RootState } from "@/redux/store";
 
@@ -14,11 +15,11 @@ const Topbar = () => {
         ml: sizeConfigs.sidebar.width,
         boxShadow: "unset",
         backgroundColor: colorConfigs.topbar.bg,
-        color: colorConfigs.topbar.color
+        color: colorConfigs.topbar.color,
       }}
     >
       <Toolbar>
-        <Typography variant="h6">
+        <Typography variant="h5" sx={{fontFamily: fontConfigs.topbar.fontFamily}}>
           {appName}
         </Typography>
       </Toolbar>

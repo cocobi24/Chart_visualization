@@ -2,6 +2,7 @@ import { ListItemButton, ListItemIcon } from "@mui/material";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import colorConfigs from "@/configs/colorConfigs";
+import fontConfigs from "@/configs/fontConfigs";
 import { RootState } from "@/redux/store";
 import { RouteType } from "@/routes/config";
 
@@ -23,7 +24,8 @@ const SidebarItem = ({ item }: Props) => {
           },
           backgroundColor: appState === item.state ? colorConfigs.sidebar.activeBg : "unset",
           paddingY: "12px",
-          paddingX: "24px"
+          paddingX: "24px",
+          fontFamily: fontConfigs.sidebar.fontFamily
         }}
       >
         <ListItemIcon sx={{

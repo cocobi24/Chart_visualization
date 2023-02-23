@@ -6,6 +6,7 @@ import { DataGrid } from '@mui/x-data-grid';
 import CustomButton from '@/components/common/CustomButton';
 import CustomDatePicker from '@/components/common/DatePicker';
 import TotalField from '@/components/common/TotalField';
+import fontConfigs from '@/configs/fontConfigs';
 
 type StatusType = {
   [index: string]: string
@@ -143,6 +144,7 @@ const MonthPage = () => {
         <TotalField label="조회기간 캠페인 완료 수: " value={totalComplete}/>
       </Grid>
       <DataGrid 
+        sx={{fontFamily: fontConfigs.main.fontFamily}}
         loading={spinner}
         getRowId={(row:any) => row.Complete+row.Revenue}
         rows={tableData} 
