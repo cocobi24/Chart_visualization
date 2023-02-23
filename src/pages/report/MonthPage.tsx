@@ -7,6 +7,7 @@ import CustomButton from '@/components/common/CustomButton';
 import CustomDatePicker from '@/components/common/DatePicker';
 import TotalField from '@/components/common/TotalField';
 import fontConfigs from '@/configs/fontConfigs';
+import { Chart } from "react-google-charts";
 
 type StatusType = {
   [index: string]: string
@@ -53,6 +54,21 @@ const MonthPage = () => {
   const [totalComplete, setTotalComplete] = useState();
   const [pickDate, setPickDate] = useState<Dayjs | null>(dayjs('2018-01-01'));
   const [spinner, setSpinner] = useState(false);
+  const [chartData, setChartData] = useState([]);
+  const tempChartData: any = [['월', '수익', '완료수']];
+
+  const chartOptions = {
+    vAxes: {
+      0: {title: '수익'},
+      1: {title: '완료수'},
+    },
+    series: {
+      0: { targetAxisIndex: 0},
+      1: { targetAxisIndex: 1},
+    },
+    backgroundColor: "transparent"
+  };
+
   const columns = [
     { 
       field: 'Datetime', 
@@ -90,7 +106,6 @@ const MonthPage = () => {
         headers :{ 'Content-Type' : 'application/json',},
         body : JSON.stringify({
           "search_year": dayjs(pickDate).year(),
-          // "search_month": 1
         }),
     })
     .then(res => {
@@ -108,12 +123,16 @@ const MonthPage = () => {
       commission = commission? Number(commission).toLocaleString('ko-KR')+' 원' : 0 ;
       complete = complete? Number(complete).toLocaleString('ko-KR')+' 건' : 0 ;
       
+      monthlyData.forEach((item: {Datetime: string, Revenue:number, Complete:number}) => {
+        tempChartData.push([convertDatetime(item.Datetime), item.Revenue, item.Complete]);
+      });
 
       setTableData(monthlyData);
       setSpinner(false);
       setTotalRevenue(revenue);
       setTotalCommission(commission);
       setTotalComplete(complete);
+      setChartData(tempChartData);
     })
     .catch(err => {
       console.log(err);
@@ -137,6 +156,19 @@ const MonthPage = () => {
         </Box>
         <CustomButton onClick={getGridData}>조회</CustomButton>
       </Grid>
+      { chartData.length > 0 ?
+        <Chart
+          chartType="LineChart"
+          data={chartData}
+          options={chartOptions}
+          rootProps={{ 'data-testid': '2' }}
+          width={'100%'}
+          height={'350px'}
+          loader={<div>Loading...</div>}
+        />
+        :
+        <></>
+      }
       <Grid container spacing={1}>
         <TotalField label="조회기간 수익: " value={totalRevenue}/>
         <TotalField label="조회기간 수수료: " value={totalCommission}/>
