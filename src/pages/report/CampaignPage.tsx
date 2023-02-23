@@ -7,7 +7,6 @@ import CustomButton from '@/components/common/CustomButton';
 import CustomDatePicker from '@/components/common/DatePicker';
 import TotalField from '@/components/common/TotalField';
 
-
 const convertDatetime = (time: string) => {
   const match = time.match(/\d+/);
   if (!match) {

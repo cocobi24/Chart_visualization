@@ -25,7 +25,6 @@ const convertDatetime = (time: string) => {
   return formattedDate;
 }
 
-
 const AppPage = () => {
   const [tableData, setTableData] = useState([]);
   const [totalRevenue, setTotalRevenue] = useState();
