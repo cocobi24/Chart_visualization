@@ -114,7 +114,6 @@ const MonthPage = () => {
       setTotalRevenue(revenue);
       setTotalCommission(commission);
       setTotalComplete(complete);
-      console.log(monthlyData)
     })
     .catch(err => {
       console.log(err);
