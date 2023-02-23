@@ -6,9 +6,12 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
-const ViewsDatePicker = () => {
-  const [value, setValue] = React.useState<Dayjs | null>(dayjs('2018-01-01'));
+interface Props {
+  value: Dayjs | null;
+  setDate: (newValue: Dayjs | null) => void;
+}
 
+const CustomDatePicker = ({ value, setDate }: Props) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack spacing={3}>
@@ -18,9 +21,7 @@ const ViewsDatePicker = () => {
           minDate={dayjs('2018-01-01')}
           maxDate={dayjs('2021-12-01')}
           value={value}
-          onChange={(newValue) => {
-            setValue(newValue);
-          }}
+          onChange={(newValue) => setDate(newValue)}
           renderInput={(params) => <TextField size="small" {...params} helperText={null} />}
         />
       </Stack>
@@ -28,4 +29,4 @@ const ViewsDatePicker = () => {
   );
 }
 
-export default ViewsDatePicker;
+export default CustomDatePicker;

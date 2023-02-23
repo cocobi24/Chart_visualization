@@ -1,13 +1,10 @@
 import React from 'react';
 import { useState } from "react";
 import dayjs, { Dayjs } from 'dayjs';
-import { Box, Grid, TextField } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { DataGrid } from '@mui/x-data-grid';
 import CustomButton from '@/components/common/CustomButton';
-import Stack from '@mui/material/Stack';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import CustomDatePicker from '@/components/common/DatePicker';
 import TotalField from '@/components/common/TotalField';
 
 const convertDatetime = (time: string) => {
@@ -34,7 +31,7 @@ const AppPage = () => {
   const [totalRevenue, setTotalRevenue] = useState();
   const [totalCommission, setTotalCommission] = useState();
   const [totalComplete, setTotalComplete] = useState();
-  const [pickDate, setPickDate] = React.useState<Dayjs | null>(dayjs('2018-01-01'));
+  const [pickDate, setPickDate] = useState<Dayjs | null>(dayjs('2018-01-01'));
   const [spinner, setSpinner] = useState(false);
 
   let appData: any = [];
@@ -108,7 +105,10 @@ const AppPage = () => {
     .catch(err => {
       console.log(err);
     });
+  }
 
+  const setDate = (newValue: Dayjs | null) => {
+    setPickDate(newValue);
   }
 
   return (
@@ -120,21 +120,7 @@ const AppPage = () => {
     >
       <Grid container spacing={1}>
         <Box p={1}>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <Stack spacing={3}>
-              <DatePicker
-                views={['year']}
-                label="Year"
-                minDate={dayjs('2018-01-01')}
-                maxDate={dayjs('2021-12-01')}
-                value={pickDate}
-                onChange={(newDate) => {
-                  setPickDate(newDate);
-                }}
-                renderInput={(params) => <TextField size="small" {...params} helperText={null} />}
-              />
-            </Stack>
-          </LocalizationProvider>
+          <CustomDatePicker value={pickDate} setDate={setDate} />
         </Box>
         <CustomButton onClick={getGridData}>조회</CustomButton>
       </Grid>
