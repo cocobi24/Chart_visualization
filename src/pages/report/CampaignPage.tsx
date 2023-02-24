@@ -143,7 +143,7 @@ const CampaignPage = () => {
   return (
     <Box 
       sx={{
-        height: '500px',
+        height: '300px',
         width: '100%'
       }}
     >
