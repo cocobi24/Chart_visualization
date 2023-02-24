@@ -27,21 +27,20 @@ const convertDatetime = (time: string) => {
 }
 
 const CampaignPage = () => {
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData] = useState<Array<any>>([]);
   const [totalRevenue, setTotalRevenue] = useState();
   const [totalCommission, setTotalCommission] = useState();
   const [totalComplete, setTotalComplete] = useState();  
   const [pickDate, setPickDate] = useState<Dayjs | null>(dayjs('2018-01-01'));
   const [spinner, setSpinner] = useState(false);
   
-  let campaignData: any = [];
   const columns = [
     { 
       field: 'Datetime', 
       headerName: '캠페인 참여 일자', 
       width: 300, 
       type: 'date',
-      valueGetter: ( params: any) => { return convertDatetime(params.value) },
+      valueGetter: ( params: {value: string}) => { return convertDatetime(params.value) },
     }, { 
       field: 'CampaignKey', 
       headerName: '캠페인 키', 
@@ -88,8 +87,10 @@ const CampaignPage = () => {
     })
     .then(data => {
       const monthlyData = data.Payment.Monthly;
-      monthlyData.forEach((row: any) => {
-        row.App[0].Campaign.forEach((campaign: any) => {
+      let campaignData: Object[] = [];
+
+      monthlyData.forEach((row: { App: { Campaign: number[] }[] }) => {
+        row.App[0].Campaign.forEach((campaign: number) => {
           campaignData.push(campaign);
         });
       });
@@ -97,9 +98,9 @@ const CampaignPage = () => {
       let revenue = data.Payment.Revenue;
       let commission = data.Payment.Commission;
       let complete = data.Payment.Complete;
-      revenue = revenue? Number(revenue).toLocaleString('ko-KR')+' 원' : 0 ;
-      commission = commission? Number(commission).toLocaleString('ko-KR')+' 원' : 0 ;
-      complete = complete? Number(complete).toLocaleString('ko-KR')+' 건' : 0 ;
+      revenue = revenue? `${Number(revenue).toLocaleString('ko-KR')} 원` : 0;
+      commission = commission? `${Number(commission).toLocaleString('ko-KR')} 원` : 0;
+      complete = complete? `${Number(complete).toLocaleString('ko-KR')} 건` : 0;
 
       setTableData(campaignData);
       setSpinner(false);
@@ -137,7 +138,7 @@ const CampaignPage = () => {
       <DataGrid 
         sx={{fontFamily: fontConfigs.main.fontFamily}}
         loading={spinner}
-        getRowId={(row:any) => row.CampaignKey+row.Complete}
+        getRowId={(row:{CampaignKey:number, Complete:number}) => row.CampaignKey+row.Complete}
         rows={tableData} 
         columns={columns}
         rowHeight={25} 

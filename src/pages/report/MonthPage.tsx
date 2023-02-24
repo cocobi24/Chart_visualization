@@ -54,8 +54,8 @@ const MonthPage = () => {
   const [totalComplete, setTotalComplete] = useState();
   const [pickDate, setPickDate] = useState<Dayjs | null>(dayjs('2018-01-01'));
   const [spinner, setSpinner] = useState(false);
-  const [chartData, setChartData] = useState([]);
-  const tempChartData: any = [['월', '수익', '완료수']];
+  const [chartData, setChartData] = useState<Object[]>([]);
+  const tempChartData: Object[] = [['월', '수익', '완료수']];
 
   const chartOptions = {
     vAxes: {
@@ -74,13 +74,13 @@ const MonthPage = () => {
       field: 'Datetime', 
       headerName: '일자', 
       width: 300, 
-      valueGetter: ( params: any) => { return convertDatetime(params.value) },
+      valueGetter: ( params: {value: string}) => { return convertDatetime(params.value) },
     }, { 
       field: 'Status', 
       headerName: '정산 상태', 
       width: 200, 
       type: 'string' ,
-      valueGetter: ( params: any) => { return convertStatus(params.value) },
+      valueGetter: ( params: {value: number}) => { return convertStatus(params.value) },
     }, { 
       field: 'Revenue', 
       headerName: '수익', 
@@ -119,9 +119,9 @@ const MonthPage = () => {
       let revenue = data.Payment.Revenue;
       let commission = data.Payment.Commission;
       let complete = data.Payment.Complete;
-      revenue = revenue? Number(revenue).toLocaleString('ko-KR')+' 원' : 0 ;
-      commission = commission? Number(commission).toLocaleString('ko-KR')+' 원' : 0 ;
-      complete = complete? Number(complete).toLocaleString('ko-KR')+' 건' : 0 ;
+      revenue = revenue? `${Number(revenue).toLocaleString('ko-KR')} 원` : 0;
+      commission = commission? `${Number(commission).toLocaleString('ko-KR')} 원` : 0;
+      complete = complete? `${Number(complete).toLocaleString('ko-KR')} 건` : 0;
       
       monthlyData.forEach((item: {Datetime: string, Revenue:number, Complete:number}) => {
         tempChartData.push([convertDatetime(item.Datetime), item.Revenue, item.Complete]);
@@ -177,7 +177,7 @@ const MonthPage = () => {
       <DataGrid 
         sx={{fontFamily: fontConfigs.main.fontFamily}}
         loading={spinner}
-        getRowId={(row:any) => row.Complete+row.Revenue}
+        getRowId={(row:{Complete:number, Revenue:number}) => row.Complete+row.Revenue}
         rows={tableData} 
         columns={columns}
         rowHeight={25} 

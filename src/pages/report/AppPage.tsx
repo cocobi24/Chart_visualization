@@ -28,28 +28,27 @@ const convertDatetime = (time: string) => {
 }
 
 const AppPage = () => {
-  const [tableData, setTableData] = useState([]);
+  const [tableData, setTableData] = useState<Array<any>>([]);
   const [totalRevenue, setTotalRevenue] = useState();
   const [totalCommission, setTotalCommission] = useState();
   const [totalComplete, setTotalComplete] = useState();
   const [pickDate, setPickDate] = useState<Dayjs | null>(dayjs('2018-01-01'));
   const [spinner, setSpinner] = useState(false);
-  const [chartData, setChartData] = useState([]);
+  const [chartData, setChartData] = useState<Object[]>([]);
 
-  const tempChartData: any = [["Task", "App per Revenue"]];
+  const tempChartData: Object[] = [["Task", "App per Revenue"]];
   const chartOptions = {
     title: "앱별 수익 현황",
     backgroundColor: "transparent"
   };
 
-  let appData: any = [];
   const columns = [
     { 
       field: 'Datetime', 
       headerName: '일자', 
       width: 300, 
       type: 'date',
-      valueGetter: ( params: any) => { return convertDatetime(params.value) },
+      valueGetter: ( params: {value: string}) => { return convertDatetime(params.value) },
     }, { 
       field: 'AppName', 
       headerName: '앱명', 
@@ -79,7 +78,6 @@ const AppPage = () => {
         headers :{ 'Content-Type' : 'application/json',},
         body : JSON.stringify({
           "search_year": dayjs(pickDate).year(),
-          // "search_month": 1
         }),
     })
     .then(res => {
@@ -90,16 +88,17 @@ const AppPage = () => {
     })
     .then(data => {
       const monthlyData = data.Payment.Monthly;
+      let appData: Object[] = [];
       let revenue = data.Payment.Revenue;
       let commission = data.Payment.Commission;
       let complete = data.Payment.Complete;
-      let tempSumData: any = []
-      const tempSumSet: any = {};
+      let tempSumData: [string, number][] = [];
+      const tempSumSet: {[key: string]: number} = {};
 
-      monthlyData.forEach((row: any) => {
-        row.App[0]['Datetime'] = row.Datetime
+      monthlyData.forEach((row: { Datetime: Date, App: { Datetime: Date, AppName: string, Revenue: number }[] }) => {
+        row.App[0]['Datetime'] = row.Datetime;
         appData.push(row.App[0]);
-        tempSumData.push([row.App[0].AppName, row.App[0].Revenue])
+        tempSumData.push([row.App[0].AppName, row.App[0].Revenue]);
       });
 
       tempSumData.forEach((item: [key:string, value:number]) => {
@@ -112,9 +111,9 @@ const AppPage = () => {
         tempChartData.push([key, tempSumSet[key]]);
       }
 
-      revenue = revenue? Number(revenue).toLocaleString('ko-KR')+' 원' : 0 ;
-      commission = commission? Number(commission).toLocaleString('ko-KR')+' 원' : 0 ;
-      complete = complete? Number(complete).toLocaleString('ko-KR')+' 건' : 0 ;
+      revenue = revenue? `${Number(revenue).toLocaleString('ko-KR')} 원` : 0;
+      commission = commission? `${Number(commission).toLocaleString('ko-KR')} 원` : 0;
+      complete = complete? `${Number(complete).toLocaleString('ko-KR')} 건` : 0;
       
       setTableData(appData);
       setSpinner(false);
@@ -144,17 +143,17 @@ const AppPage = () => {
           <CustomDatePicker value={pickDate} setDate={setDate} />
         </Box>
         <CustomButton onClick={getGridData}>조회</CustomButton>
-      { chartData.length > 0 ?
-        <Chart
-          chartType="PieChart"
-          data={chartData}
-          options={chartOptions}
-          width={"100%"}
-          height={"350px"}
-        />
-        :
-        <></>
-      }
+        { chartData.length > 0 ?
+          <Chart
+            chartType="PieChart"
+            data={chartData}
+            options={chartOptions}
+            width={"100%"}
+            height={"350px"}
+          />
+          :
+          <></>
+        }
       </Grid>
       <Grid container spacing={1}>
         <TotalField label="조회기간 수익: " value={totalRevenue}/>
@@ -164,7 +163,7 @@ const AppPage = () => {
       <DataGrid 
         sx={{fontFamily: fontConfigs.main.fontFamily}}
         loading={spinner}
-        getRowId={(row:any) => row.Revenue+row.Complete}
+        getRowId={(row:{Complete:number, Revenue:number}) => row.Revenue+row.Complete}
         rows={tableData} 
         columns={columns}
         rowHeight={25} 
