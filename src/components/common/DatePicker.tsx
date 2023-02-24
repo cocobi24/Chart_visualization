@@ -7,17 +7,19 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 interface Props {
+  views: Array<any>;
   value: Dayjs | null;
   setDate: (newValue: Dayjs | null) => void;
 }
 
-const CustomDatePicker = ({ value, setDate }: Props) => {
+const CustomDatePicker = ({ views, value, setDate }: Props) => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <Stack spacing={3}>
         <DatePicker
-          views={['year']}
-          label="Year"
+          inputFormat={views.length === 1? 'YYYY' : "YYYY-MM"}
+          views={views}
+          label={views.length === 1? 'Year' : "Calendar"}
           minDate={dayjs('2018-01-01')}
           maxDate={dayjs('2021-12-01')}
           value={value}

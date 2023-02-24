@@ -140,7 +140,7 @@ const AppPage = () => {
     >
       <Grid container spacing={1}>
         <Box p={1}>
-          <CustomDatePicker value={pickDate} setDate={setDate} />
+          <CustomDatePicker views={["year"]} value={pickDate} setDate={setDate} />
         </Box>
         <CustomButton onClick={getGridData}>조회</CustomButton>
         { chartData.length > 0 ?

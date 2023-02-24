@@ -76,7 +76,7 @@ const CampaignPage = () => {
         headers :{ 'Content-Type' : 'application/json',},
         body : JSON.stringify({
           "search_year": dayjs(pickDate).year(),
-          // "search_month": 1
+          "search_month": dayjs(pickDate).month()+1
         }),
     })
     .then(res => {
@@ -126,7 +126,7 @@ const CampaignPage = () => {
     >
       <Grid container spacing={1}>
         <Box p={1}>
-          <CustomDatePicker value={pickDate} setDate={setDate} />
+          <CustomDatePicker views={["year", "month"]} value={pickDate} setDate={setDate} />
         </Box>
         <CustomButton onClick={getGridData}>조회</CustomButton>
       </Grid>
