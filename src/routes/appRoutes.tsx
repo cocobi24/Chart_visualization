@@ -37,7 +37,7 @@ const appRoutes: RouteType[] = [
         element: <CampaignPage />,
         state: "report.campaign",
         sidebarProps: {
-          displayText: "캠패인별 수익 현황"
+          displayText: "캠페인별 수익 현황"
         },
       },
       {

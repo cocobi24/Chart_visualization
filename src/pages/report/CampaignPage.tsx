@@ -7,6 +7,7 @@ import CustomButton from '@/components/common/CustomButton';
 import CustomDatePicker from '@/components/common/DatePicker';
 import TotalField from '@/components/common/TotalField';
 import fontConfigs from '@/configs/fontConfigs';
+import { Chart } from "react-google-charts";
 
 const convertDatetime = (time: string) => {
   const match = time.match(/\d+/);
@@ -33,7 +34,15 @@ const CampaignPage = () => {
   const [totalComplete, setTotalComplete] = useState();  
   const [pickDate, setPickDate] = useState<Dayjs | null>(dayjs('2018-01-01'));
   const [spinner, setSpinner] = useState(false);
+  const [chartData, setChartData] = useState<Object[]>([]);
   
+  const tempChartData: Object[] = [["Task", "Campaign per Revenue"]];
+  const chartOptions = {
+    title: "캠페인별 수익 현황",
+    backgroundColor: "transparent",
+    pieHole: 0.4,
+  };
+
   const columns = [
     { 
       field: 'Datetime', 
@@ -88,16 +97,29 @@ const CampaignPage = () => {
     .then(data => {
       const monthlyData = data.Payment.Monthly;
       let campaignData: Object[] = [];
-
-      monthlyData.forEach((row: { App: { Campaign: number[] }[] }) => {
-        row.App[0].Campaign.forEach((campaign: number) => {
-          campaignData.push(campaign);
-        });
-      });
-
       let revenue = data.Payment.Revenue;
       let commission = data.Payment.Commission;
       let complete = data.Payment.Complete;
+      let tempSumData: [string, number][] = [];
+      const tempSumSet: {[key: string]: number} = {};
+
+      monthlyData.forEach((row: { App: { Campaign: { CampaignName: string, Revenue: number}[] }[] }) => {
+        row.App[0].Campaign.forEach((campaign: { CampaignName: string, Revenue: number }) => {
+          campaignData.push(campaign);
+          tempSumData.push([campaign.CampaignName, campaign.Revenue]);
+        });
+      });
+
+      tempSumData.forEach((item: [key:string, value:number]) => {
+        const key = item[0];
+        const value = item[1];
+        tempSumSet[key] = (tempSumSet[key] || 0) + value;
+      });
+
+      for (var key in tempSumSet) {
+        tempChartData.push([key, tempSumSet[key]]);
+      }
+
       revenue = revenue? `${Number(revenue).toLocaleString('ko-KR')} 원` : 0;
       commission = commission? `${Number(commission).toLocaleString('ko-KR')} 원` : 0;
       complete = complete? `${Number(complete).toLocaleString('ko-KR')} 건` : 0;
@@ -107,6 +129,7 @@ const CampaignPage = () => {
       setTotalRevenue(revenue);
       setTotalCommission(commission);
       setTotalComplete(complete);
+      setChartData(tempChartData);
     })
     .catch(err => {
       console.log(err);
@@ -129,6 +152,17 @@ const CampaignPage = () => {
           <CustomDatePicker views={["year", "month"]} value={pickDate} setDate={setDate} />
         </Box>
         <CustomButton onClick={getGridData}>조회</CustomButton>
+        { chartData.length > 0 ?
+          <Chart
+            chartType="PieChart"
+            data={chartData}
+            options={chartOptions}
+            width={"100%"}
+            height={"350px"}
+          />
+          :
+          <></>
+        }
       </Grid>
       <Grid container spacing={1}>
         <TotalField label="조회기간 수익: " value={totalRevenue}/>
