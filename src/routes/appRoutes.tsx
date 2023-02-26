@@ -28,7 +28,7 @@ const appRoutes: RouteType[] = [
     element: <ReportPageLayout />,
     state: "report",
     sidebarProps: {
-      displayText: "보고서",
+      displayText: "리포트",
       icon: <ReportOutlinedIcon />
     },
     child: [
